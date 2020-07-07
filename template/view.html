@@ -1,0 +1,174 @@
+{% extends "base_loggedin.html" %}
+
+{%block content %}
+<div style="display: flex">
+    <div>
+        <div style="margin-left: 5vw; border: 0px solid lightgrey; padding: 15px; box-shadow: 0px 10px 15px -4px lightgrey">
+            <form action="view" method="post">
+                {% csrf_token %}
+                <div>
+                    <div>
+                        Search in notes<br>
+                        <input type="text" name="search_notes" {% if search_notes %} value="{{search_notes}}" {% endif %}>
+                    </div>
+                    <div style="display:flex; justify-content: space-between">
+                        <input type="submit" name="filter" value="filter" style="margin-top: 5px">
+                        <input type="submit" name="download" value="as .csv" style="margin-top: 5px">
+                    </div>
+                </div>
+            </form>
+            <hr style="margin: 20px 0px 20px 0px; border: 1px solid lightgrey">
+            <form action="view" method="post">
+                {% csrf_token %}
+                <div>
+                    <div>From<br>
+                        <input type="date" name="date1" value="{{start}}"required>
+                    </div>
+                    <div>To<br>
+                        <input type="date" name="date2" value="{{end}}" required>
+                    </div>
+                    <div style="display:flex; justify-content: space-between">
+                        <input type="submit" name="filter" value="filter" style="margin-top: 5px">
+                        <input type="submit" name="download" value="as .csv" style="margin-top: 5px">
+                    </div>
+                </div>
+            </form>
+            <hr style="margin: 20px 0px 20px 0px; border: 1px solid lightgrey">
+            <form action="view" method="post">
+                <div>
+                    Past days<br>
+                {% csrf_token %}
+                <select name="range" required>
+                    <option disabled value {% if not range_days %} selected {% endif %}> -- select an option -- </option>
+                    <option value="7" {% if range_days == "7" %} selected {% endif %}>Last 7 Days</option>
+                    <option value="30"{% if range_days == "30" %} selected {% endif %}>Last 30 Days</option>
+                    <option value="365" {% if range_days == "365" %} selected {% endif %}>Last 365 Days</option>
+                </select><br>
+                <div style="display:flex; justify-content: space-between">
+                    <input type="submit" name="filter" value="filter" style="margin-top: 5px">
+                    <input type="submit" name="download" value="as .csv" style="margin-top: 5px">
+                </div>
+                </div>
+            </form>
+            <hr style="margin: 20px 0px 20px 0px; border: 1px solid lightgrey">
+            Category
+            <form action="view" method="post">
+                {% csrf_token %}
+                <select name="category" required>
+                    {% if not category|length %}
+                        <option disabled selected value>add data first</option>
+                    {% endif %}
+                        <option disabled value {% if not category_select %} selected {% endif %}> -- select an option -- </option>
+                    {% for cat in category %}
+                        <option value="{{cat}}" {% if category_select == cat %} selected {% endif %}>{{cat}}</option>
+                    {% endfor %}
+                </select><br>
+                <div style="display:flex; justify-content: space-between">
+                    <input type="submit" name="filter" value="filter" style="margin-top: 5px">
+                    <input type="submit" name="download" value="as .csv" style="margin-top: 5px">
+                </div>
+            </form>
+            <hr style="margin: 20px 0px 20px 0px; border: 1px solid lightgrey">
+            <form action="toggle_edit" method="POST">
+                <div>
+                    {% csrf_token %}
+                    Edit Items<br>
+                    <input type="hidden" name="toggle_edit_value" value="{% if toggle_edit == False %}True{% else %}False{% endif %}">
+                    <input type="submit" value="{% if toggle_edit == False %} on {% else %} off {% endif %}" style="margin-top: 5px">
+                </div>
+            </form>
+            {% if toggle_edit == True %}
+                <form action="delete_table" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="delete all entries" name="delete_table" style="background-color: red; color: white" onclick="return confirm('Are you sure? \n THIS WILL DELETE ALL ENTRIES.')">
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    {% if toggle_edit == False %}
+    <div style="margin-left: 9vw; box-shadow: 0px 10px 15px -4px lightgrey">
+        <div style="height: 60vh; overflow: auto; width: 65vw; background-color: #CFCFCF">
+            <div>
+                <table class="table sticky" style="text-align: center">
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Notes</th>
+                    </tr>
+                {% for dat in data %}
+                    <tr>
+                        <td>{{dat.date}}</td>
+                        <td>{{dat.category}}</td>
+                        <td style="text-align: right">{{dat.price_b|floatformat:2}}€</td>
+                        <td>{{dat.notes}}</td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div style="width: 65vw;">
+            <table class="tablebottom">
+                <tr>
+                    <th>Total</th>
+                    <th></th>
+                    <th>{{total|floatformat:2}}€</th>
+                    {% if percentage %}
+                    <th {% if percentage >= 100 %} style = "color: red" {% else %} style = "color: green" {% endif %}>{{percentage}}% of monthly limit</th>
+                    {% else %}
+                    <th></th>
+                    {% endif %}
+                </tr>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    {% if data %}
+    <div style="height: 60vh; margin-left: 9vw; overflow: auto; width: 65vw; box-shadow: 0px 10px 15px -4px lightgrey; background-color: #CFCFCF">   
+        <table class="table sticky">
+            <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Notes</th>
+                <th>Options</th>
+            </tr>
+        {% for dat in data %}
+            <tr>
+                <form action="edit_data" method="post">
+                    {% csrf_token %}
+                    <div>
+                        <td><input type="date" name="date" value="{{dat.date|date:'Y-m-d'}}"></td>
+                        <td><select name="category">
+                            {% if not category|length %}
+                                <option disabled selected value>add data first</option>
+                            {% endif %}
+                            {% for cat in category %}
+                                <option {% if dat.category == cat %} selected="selected" {% endif %} value="{{cat}}">{{cat}}</option>
+                            {% endfor %}
+                        </select></td>
+                        <td><input type="number" name="price" step="0.01" value="{{dat.price_b|floatformat:2}}"></td>
+                        <td><input type="text" name="notes" value="{{dat.notes}}"></td>
+                        <td>
+                            <input type="hidden" name="dat_id" value="{{dat.id}}">
+                            <input type="submit" value="save changes" onclick="return confirm('Are you sure you want to edit this item?\n\n{{dat.date}} -> ' + date.value + '\n{{dat.category}} -> ' + category.value + '\n{{dat.price_b|floatformat:2}} -> ' + price.value)">
+                </form>
+                <form action="remove_data" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="dat_id" value="{{dat.id}}">
+                    <input type="submit" style="background-color: red; color: white" value="delete entry" onclick="return confirm('Are you sure you want to delete?')">
+                </form>
+                        </td>
+
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    {% else %}
+    <div style="margin-left: 10vw">
+        <h2>Add data first</h2>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

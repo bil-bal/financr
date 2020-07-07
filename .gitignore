@@ -1,0 +1,5 @@
+__pycache__
+*.swp
+*.sqlite3
+migrations
+static

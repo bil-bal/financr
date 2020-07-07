@@ -1,0 +1,55 @@
+{% extends "base_loggedin.html" %}
+
+
+{% block content %}
+<div style="margin-left: 5vw">
+    <h2>Welcome to financr</h2>
+    <br>
+    <div style="display:flex; flex-direction: row">
+        <div>
+            <h4>
+                financr is an easy and lightweight way to keep track of your expenses
+            </h4>
+            <p style="width: 45vw">
+                It is meant to help you add your daily spendings to a database from anywhere and be able to look up your finances 
+                and filter the entries multiple ways to give you the best fitting overview you need. But you can use it however its possible and you like.
+            </p>
+            <p style="width: 45vw">
+                The entries are made up of date, category, price, and optional notes which you can add. It is possible to edit every entry after adding it to the table.
+                You can set custom categories for everything you can think of, to help you keep things organised to your preference.
+            </p>
+            <p style="width: 45vw">
+                You can add a monthly limit to your total spendings which will show how much of that limit you reached or if you passed it and by how much percent.
+            </p>
+            <p style="width: 45vw">
+                It is possible to download your entries as a .csv file for easy transfer, a local backup or to work on the data. Importing a .csv file is possible too.
+                Just make sure it contains the header <b>date, category, price, notes</b> with the data in the correct columns.
+            </p>
+            <p style="width: 45vw">
+                The actual amounts (price column and monthly limit) will be encrypted through the <a href="https://cryptography.io/en/latest/fernet/"><b>Fernet (symmetric encryption)</b></a> algorithm and a secret key
+                and everytime they get looked up, or downloaded as a .csv file they will be decrypted.
+            </p>
+            <p style="width: 45vw">Finally, you can view graphs for your data to help you visualize the expenses.</p>
+        </div>
+        <div style="margin-left: 5vw; width: 30vw">
+            <h4>Built with</h4>
+            <p>
+                <ul style="list-style-type:square">
+                    <li>HTML</li>
+                    <li>CSS</li>
+                    <li>Python</li>
+                    <li>PostgreSQL</li>
+                </ul>
+            </p>
+            <h4>Modules used</h4>
+            <p>
+                <ul style="list-style-type:square">
+                    <li><a href="https://www.djangoproject.com/">Django</a></li>
+                    <li><a href="https://cryptography.io/">Cryptography</a></li>
+                    <li><a href="http://www.pygal.org/">Pygal</a></li>
+                </ul>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
