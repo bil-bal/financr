@@ -31,7 +31,6 @@ def add_monthly(request):
     else:
         return redirect('add')
 
-
 @login_required
 def add_data(request):
     if request.method == "POST":
@@ -73,38 +72,6 @@ def remove_cat(request):
         return redirect('add')
     else:
         return redirect('add')
-
-# @login_required
-# def view_data(request):
-#     total = 0
-#     start = False
-#     end = False
-
-#     cat = Category.objects.filter(user_id = request.user.id).values('cat')
-#     cat_set = set()
-#     dat = Expense.objects.filter(user_id = request.user.id).order_by("-date")
-#     for x in cat:
-#         cat_set.add(x.get('cat'))
-#     if bool(request.POST.get("date1")) and bool(request.POST.get("date2")):
-#         start = request.POST['date1']
-#         end = request.POST['date2']
-#         if start > end:
-#             start = request.POST['date2']
-#             end = request.POST['date1']
-#         dat = Expense.objects.filter(date__range=(start, end), user_id = request.user.id).order_by("-date")
-#     elif bool(request.POST.get("range")):
-#         end = datetime.date.today()
-#         start = end - datetime.timedelta(int(request.POST.get("range")))
-#         dat = Expense.objects.filter(date__range=(start, end), user_id = request.user.id).order_by("-date")
-#     elif bool(request.POST.get("category")):
-#         cat = request.POST.get("category")
-#         dat = Expense.objects.filter(category = cat, user_id = request.user.id)
-
-#     for x in dat:
-#         x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
-#         total += x.price_b
-        
-#     return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_set, "toggle_edit": False, "total": total, "start": start, "end": end})
 
 @login_required
 def remove_data(request):
@@ -166,25 +133,7 @@ def toggle_edit(request):
     else:
         return redirect("view")
         
-# @login_required
-# def download_csv(request, dat):
-#     response = HttpResponse(content_type="text/csv")
-#     response["Content-Disposition"] = 'attachment; filename="financr.csv"'
-
-#     writer = csv.writer(response)
-#     writer.writerow(["date","category","price","notes"])
-    
-#     #dat = Expense.objects.filter(user_id = request.user.id).order_by("-date")
-
-#     print(dat)
-
-
-#     for x in dat:
-#         x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
-#         writer.writerow([x.date, x.category, x.price_b, x.notes])
-
-#     return response
-
+@login_required
 def import_csv(request):
     if request.method == "POST":
         csv_file = request.FILES['csv_file']
