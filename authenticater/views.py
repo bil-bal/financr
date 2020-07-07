@@ -10,8 +10,10 @@ def home(request):
     else:
         return render(request, "home.html")
 
+
 def register(request):
     return render(request, "register.html")
+
 
 def confirm_register(request):
     if request.method == "POST":
@@ -27,13 +29,13 @@ def confirm_register(request):
             else:
                 user = User.objects.create_user(username = username, password = password1, first_name = first_name, last_name = last_name)
                 user.save()
-                print("user created")
         else:
             messages.info(request, "Passwords don't match")
             return redirect("register")
         return redirect("/")
     else:
         return render(request, 'register')
+
 
 def login(request):
     if request.method == "POST":

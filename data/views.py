@@ -31,6 +31,7 @@ def add_monthly(request):
     else:
         return redirect('add')
 
+
 @login_required
 def add_data(request):
     if request.method == "POST":
@@ -51,6 +52,7 @@ def add_data(request):
     else:
         return redirect('add')
 
+
 @login_required
 def add_cat(request):
     if request.method == "POST":
@@ -64,6 +66,7 @@ def add_cat(request):
     else:
         return redirect('add')
 
+
 @login_required
 def remove_cat(request):
     if request.method == "POST":
@@ -72,6 +75,7 @@ def remove_cat(request):
         return redirect('add')
     else:
         return redirect('add')
+
 
 @login_required
 def remove_data(request):
@@ -89,6 +93,7 @@ def remove_data(request):
         return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_set, "toggle_edit": True})
     else:
         return redirect("view")
+
 
 @login_required
 def edit_data(request):
@@ -112,6 +117,7 @@ def edit_data(request):
     else:
         return redirect("view")
 
+
 @login_required
 def toggle_edit(request):
     if request.method == "POST":
@@ -132,7 +138,8 @@ def toggle_edit(request):
         return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_set, "toggle_edit": tr})
     else:
         return redirect("view")
-        
+
+     
 @login_required
 def import_csv(request):
     if request.method == "POST":
@@ -176,6 +183,7 @@ def import_csv(request):
     else:
         return redirect('add')
 
+
 @login_required
 def delete_table(request):
     if request.method == "POST":
@@ -184,6 +192,7 @@ def delete_table(request):
         return redirect('view')
 
     return redirect('view')
+
 
 def gen_encr(pw_):
     password = bytes(pw_, 'utf-8')
@@ -197,10 +206,12 @@ def gen_encr(pw_):
     key = base64.urlsafe_b64encode(kdf.derive(password))
     return key
 
+
 def encr(key, price_to_enc):
     f = Fernet(key)
     token = f.encrypt(bytes(price_to_enc, 'utf-8'))
     return token
+
 
 def decr(key, token_to_decr):
     f =  Fernet(key)

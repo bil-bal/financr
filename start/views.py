@@ -25,6 +25,7 @@ def logout(request):
     auth.logout(request)
     return redirect("home")
 
+
 @login_required
 def add(request):
     cat = Category.objects.filter(user_id = request.user.id)#
@@ -54,6 +55,7 @@ def add(request):
 
     return render(request, "add.html", {"name": request.user.first_name, "category": cat_set, "data": dat__, "nbar": "add", "monthly": monthly_value, "messages": storage})
 
+
 @login_required
 def view(request):
     total = 0
@@ -65,11 +67,9 @@ def view(request):
     range_days = False
     category_select = False
     search_notes = False
-    # month_count_value = 0
 
     for x in cat:
         cat_set.add(x.get('cat'))
-    #dat = Expense.objects.filter(user_id = request.user.id).order_by('-date')
     
     monthly_limit = Monthly.objects.filter(user_id = request.user.id).values("monthly", "user_id")
     
@@ -94,15 +94,12 @@ def view(request):
     else:
         dat = Expense.objects.filter(user_id = request.user.id).order_by('-date')
 
-    
     if 'download' in request.POST and dat:
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename=financr Backup {datetime.date.today()}.csv'
 
         writer = csv.writer(response)
         writer.writerow(["date","category","price","notes"])
-        
-        #dat = Expense.objects.filter(user_id = request.user.id).order_by("-date")
 
         for x in dat:
             x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
@@ -113,7 +110,6 @@ def view(request):
     date_dict = {}
     day_count = 0
     month_count = 0
-    # daily_limit = round((12 * monthly_limit) / 365, 2)
 
     for x in dat:
         x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
@@ -137,7 +133,6 @@ def view(request):
     if monthly_limit:
         monthly_limit = int(decr(gen_encr(SECRET_KEY), bytes(monthly_limit[0].get("monthly"))))
         month_count_value = month_count * monthly_limit
-    # day_count_value = day_count * daily_limit
 
     if monthly_limit and month_count_value != 0:
         percentage = round((total / month_count_value) * 100, 2)
@@ -145,7 +140,6 @@ def view(request):
         percentage = 0
 
     return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_set, "toggle_edit": False, "total": total, "percentage": percentage, "start": start, "end": end, "range_days": range_days, "category_select": category_select, "search_notes": search_notes})
-    
     
 
 @login_required
