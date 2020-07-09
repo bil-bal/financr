@@ -14,6 +14,7 @@ import os
 
 # Create your views here.
 
+
 def start(request):
     if request.user.is_authenticated:
         return render(request, "start.html", {"name": request.user.first_name, "nbar": "start"})
@@ -25,43 +26,38 @@ def logout(request):
     auth.logout(request)
     return redirect("home")
 
-
+# view for add page
 @login_required
 def add(request):
-    cat = Category.objects.filter(user_id = request.user.id)#
+    cat = Category.objects.filter(user_id = request.user.id).values("cat")
     storage = messages.get_messages(request)
-    cat_set = set()
-    for x in cat.values("cat", "user_id"):
-        if request.user.id == x.get("user_id"):
-            cat_set.add(x.get("cat"))
-    dat = Expense.objects.filter(user_id = request.user.id).order_by('-id')
-    dat__ = []
-    c = 0
-    for i in dat:
-        dat__.append(i)
-        c += 1
-        if c == 5:
-            break
+    cat_list = []
 
-    for x in dat__:
+    for x in cat:
+        cat_list.append(x.get("cat"))
+
+    dat = Expense.objects.filter(user_id = request.user.id).order_by('-id')[:5]
+
+    for x in dat:
         x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
 
-    monthly_limit = Monthly.objects.filter(user_id = request.user.id).values("monthly", "user_id")
-    
+    monthly_limit = Monthly.objects.filter(user_id = request.user.id).values("monthly")
+
     if not monthly_limit:
         monthly_value = 0
     else:
         monthly_value = int(decr(gen_encr(SECRET_KEY), bytes(monthly_limit[0].get("monthly"))))
 
-    return render(request, "add.html", {"name": request.user.first_name, "category": cat_set, "data": dat__, "nbar": "add", "monthly": monthly_value, "messages": storage})
+    return render(request, "add.html", {"name": request.user.first_name, "category": cat_list, "data": dat, "nbar": "add", "monthly": monthly_value, "messages": storage})
 
-
+# view for view page
 @login_required
 def view(request):
-    total = 0
+    total = 0       # total sum
     cat = Category.objects.filter(user_id = request.user.id).values('cat')
-    cat_set = set()
+    cat_list = []
 
+    # booleans for view filter
     start = False
     end = False
     range_days = False
@@ -69,10 +65,11 @@ def view(request):
     search_notes = False
 
     for x in cat:
-        cat_set.add(x.get('cat'))
+        cat_list.append(x.get('cat'))
     
-    monthly_limit = Monthly.objects.filter(user_id = request.user.id).values("monthly", "user_id")
-    
+    monthly_limit = Monthly.objects.filter(user_id = request.user.id).values("monthly")
+
+    # which way to filter entries
     if bool(request.POST.get("date1")) and bool(request.POST.get("date2")):
         start = request.POST['date1']
         end = request.POST['date2']
@@ -94,6 +91,7 @@ def view(request):
     else:
         dat = Expense.objects.filter(user_id = request.user.id).order_by('-date')
 
+    # download filtered entries as .csv file
     if 'download' in request.POST and dat:
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename=financr Backup {datetime.date.today()}.csv'
@@ -107,8 +105,8 @@ def view(request):
 
         return response
 
+    # create dictionary of entries for dates to calculate monthly limit percantage
     date_dict = {}
-    day_count = 0
     month_count = 0
 
     for x in dat:
@@ -127,9 +125,7 @@ def view(request):
 
     for i in date_dict.values():
         month_count += len(i.keys())
-
-        for l in i.values():
-            day_count += len(l)
+    
     if monthly_limit:
         monthly_limit = int(decr(gen_encr(SECRET_KEY), bytes(monthly_limit[0].get("monthly"))))
         month_count_value = month_count * monthly_limit
@@ -139,9 +135,9 @@ def view(request):
     else:
         percentage = 0
 
-    return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_set, "toggle_edit": False, "total": total, "percentage": percentage, "start": start, "end": end, "range_days": range_days, "category_select": category_select, "search_notes": search_notes})
+    return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": False, "total": total, "percentage": percentage, "start": start, "end": end, "range_days": range_days, "category_select": category_select, "search_notes": search_notes})
     
-
+# view for graph page
 @login_required
 def graphs(request):
     custom_style = Style(
