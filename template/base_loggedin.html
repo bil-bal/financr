@@ -115,11 +115,11 @@
     </header>
     <div>
         <ul id="navbar">
-            <li class="linavbar {% if nbar == 'start' %}nbactive{% endif %}"><a class="lianchor" href="start">start</a></li>
-            <li class="linavbar {% if nbar == 'add' %}nbactive{% endif %}"><a class="lianchor" href="add">add</a></li>
-            <li class="linavbar {% if nbar == 'view' %}nbactive{% endif %}"><a class="lianchor" href="view">view</a></li>
-            <li class="linavbar {% if nbar == 'graphs' %}nbactive{% endif %}"><a class="lianchor" href="graphs">graph</a></li>
-            <li class="linavbar" style="float: right"><a class="lianchor" href="logout">logout</a></li>
+            <li class="linavbar {% if nbar == 'start' %}nbactive{% endif %}"><a class="lianchor" href="/start">start</a></li>
+            <li class="linavbar {% if nbar == 'add' %}nbactive{% endif %}"><a class="lianchor" href="/add">add</a></li>
+            <li class="linavbar {% if nbar == 'view' %}nbactive{% endif %}"><a class="lianchor" href="/view">view</a></li>
+            <li class="linavbar {% if nbar == 'graphs' %}nbactive{% endif %}"><a class="lianchor" href="/graphs">graph</a></li>
+            <li class="linavbar" style="float: right"><a class="lianchor" href="/logout">logout</a></li>
             <div class="welcome unselectable" style="float: right">
                 {% if name %}
                 Welcome,  {{name}}!

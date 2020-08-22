@@ -4,7 +4,7 @@
 <div style="display: flex">
     <div>
         <div style="margin-left: 5vw; border: 0px solid lightgrey; padding: 15px; box-shadow: 0px 10px 15px -4px lightgrey">
-            <form action="view" method="post">
+            <form action="/view/" method="post">
                 {% csrf_token %}
                 <div>
                     <div>
@@ -18,7 +18,7 @@
                 </div>
             </form>
             <hr style="margin: 20px 0px 20px 0px; border: 1px solid lightgrey">
-            <form action="view" method="post">
+            <form action="/view/" method="post">
                 {% csrf_token %}
                 <div>
                     <div>From<br>
@@ -34,7 +34,7 @@
                 </div>
             </form>
             <hr style="margin: 20px 0px 20px 0px; border: 1px solid lightgrey">
-            <form action="view" method="post">
+            <form action="/view/" method="post">
                 <div>
                     Past days<br>
                 {% csrf_token %}
@@ -52,7 +52,7 @@
             </form>
             <hr style="margin: 20px 0px 20px 0px; border: 1px solid lightgrey">
             Category
-            <form action="view" method="post">
+            <form action="/view/" method="post">
                 {% csrf_token %}
                 <select name="category" required>
                     {% if not category|length %}

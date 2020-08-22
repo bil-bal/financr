@@ -4,7 +4,7 @@
 <div style="display: flex">
     <div style="margin-left: 5vw">
         <div style="border: 0px solid lightgrey; padding: 15px; box-shadow: 0px 10px 15px -4px lightgrey">
-            <form action="graphs" method="post">
+            <form action="/graphs/" method="post">
                 {% csrf_token %}
                 <div>From<br><input type="date" name="date1" value="{{start}}" required></div>
                 <div>To<br><input type="date" name="date2" value="{{end}}" required></div>
