@@ -1,13 +1,17 @@
 from django.shortcuts import render
-from .serializers import ExpenseSerializer, CategorySerializer, MonthlySerializer
+from .serializers import ExpenseSerializer, CategorySerializer, MonthlySerializer, UserSerializer
 from data.models import Expense, Category, Monthly
+from django.contrib.auth.models import User
 from rest_framework import viewsets, response
+from rest_framework.permissions import AllowAny
+from rest_framework.generics import CreateAPIView
 from data.views import decr, gen_encr, encr
 from financr.settings import SECRET_KEY
 from django.db.models import Q
 from datetime import datetime
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from rest_framework.mixins import UpdateModelMixin
+from rest_framework.authtoken.models import Token
 
 import time
 
@@ -98,3 +102,14 @@ class CategoryView(viewsets.ModelViewSet):
         serializer.save()
 
         return response.Response(serializer.data)
+
+class UserCreate(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        token, created = Token.objects.get_or_create(user_id=response.data["id"])
+        response.data["token"] = str(token)
+        return response

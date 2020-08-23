@@ -25,7 +25,7 @@ def confirm_register(request):
     if request.method == "POST":
         first_name = request.POST["first_name"].strip()
         last_name = request.POST["last_name"].strip()
-        username = request.POST["username"].strip()
+        username = request.POST["username"].strip().lower()
         password1 = request.POST["password1"]
         password2 = request.POST["password2"]
         if password1 == password2:
@@ -45,7 +45,7 @@ def confirm_register(request):
 
 def login(request):
     if request.method == "POST":
-        username = request.POST["username"]
+        username = request.POST["username"].strip().lower()
         password = request.POST["password"]
 
         user = auth.authenticate(username = username, password = password)
