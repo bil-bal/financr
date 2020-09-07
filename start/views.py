@@ -17,7 +17,7 @@ import os
 
 def start(request):
     if request.user.is_authenticated:
-        return render(request, "start.html", {"name": request.user.first_name, "nbar": "start"})
+        return render(request, "start.html", {"name": request.user.username, "nbar": "start"})
     else:
         messages.info(request, "Not logged in")
         return redirect("home")
@@ -48,7 +48,7 @@ def add(request):
     else:
         monthly_value = int(decr(gen_encr(SECRET_KEY), bytes(monthly_limit[0].get("monthly"))))
 
-    return render(request, "add.html", {"name": request.user.first_name, "category": cat_list, "data": dat, "nbar": "add", "monthly": monthly_value, "messages": storage})
+    return render(request, "add.html", {"name": request.user.username, "category": cat_list, "data": dat, "nbar": "add", "monthly": monthly_value, "messages": storage})
 
 # view for view page
 @login_required
@@ -71,15 +71,21 @@ def view(request):
 
     # which way to filter entries
     if bool(request.POST.get("date1")) and bool(request.POST.get("date2")):
-        start = request.POST['date1']
-        end = request.POST['date2']
+        start = f"{request.POST['date1']} 00:00:00"
+        _start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
+        end = f"{request.POST['date2']} 23:59:59"
+        _end = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
         if start > end:
-            start = request.POST['date2']
-            end = request.POST['date1']
-        dat = Expense.objects.filter(date__range=(start, end), user_id = request.user.id).order_by("-date")
+            start = f"{request.POST['date2']} 00:00:00"
+            _start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
+            end = f"{request.POST['date1']} 23:59:59"
+            _end = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
+        dat = Expense.objects.filter(date__range=(_start, _end), user_id = request.user.id).order_by("-date")
+        start = datetime.datetime.strftime(_start.date(), "%Y-%m-%d")
+        end = datetime.datetime.strftime(_end.date(), "%Y-%m-%d")
     elif bool(request.POST.get("range")):
         range_days = request.POST.get("range")
-        end = datetime.date.today()
+        end = datetime.datetime.today()
         start = end - datetime.timedelta(int(range_days))
         dat = Expense.objects.filter(date__range=(start, end), user_id = request.user.id).order_by("-date")
     elif bool(request.POST.get("category")):
@@ -135,7 +141,7 @@ def view(request):
     else:
         percentage = 0
 
-    return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": False, "total": total, "percentage": percentage, "start": start, "end": end, "range_days": range_days, "category_select": category_select, "search_notes": search_notes})
+    return render(request, "view.html", {"name": request.user.username, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": False, "total": total, "percentage": percentage, "start": start, "end": end, "range_days": range_days, "category_select": category_select, "search_notes": search_notes})
     
 # view for graph page
 @login_required
@@ -164,12 +170,18 @@ def graphs(request):
     end = False
 
     if bool(request.POST.get("date1")) and bool(request.POST.get("date2")):
-        start = request.POST['date1']
-        end = request.POST['date2']
+        start = f"{request.POST['date1']} 00:00:00"
+        _start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
+        end = f"{request.POST['date2']} 23:59:59"
+        _end = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
         if start > end:
-            start = request.POST['date2']
-            end = request.POST['date1']
-        dat = Expense.objects.filter(date__range=(start, end), user_id = request.user.id).order_by("date")
+            start = f"{request.POST['date2']} 00:00:00"
+            _start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
+            end = f"{request.POST['date1']} 23:59:59"
+            _end = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
+        dat = Expense.objects.filter(date__range=(_start, _end), user_id = request.user.id).order_by("date")
+        start = datetime.datetime.strftime(_start.date(), "%Y-%m-%d")
+        end = datetime.datetime.strftime(_end.date(), "%Y-%m-%d")
 
     for x in dat:
         date_dict_month[x.date.year] = {}
@@ -235,4 +247,4 @@ def graphs(request):
 
     cat_chart_data = cat_chart.render_data_uri()
 
-    return render(request, "graphs.html", {"name": request.user.first_name, "nbar": "graphs", "cat_chart_data": cat_chart_data, "line_chart_data": line_chart_data, "bar_chart_data": bar_chart_data, "start": start, "end": end})
+    return render(request, "graphs.html", {"name": request.user.username, "nbar": "graphs", "cat_chart_data": cat_chart_data, "line_chart_data": line_chart_data, "bar_chart_data": bar_chart_data, "start": start, "end": end})

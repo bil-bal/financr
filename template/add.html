@@ -1,6 +1,5 @@
 {% extends "base_loggedin.html" %}
 
-
 {%block content %}
 <div style="display: flex">
     <div style="margin-left: 5vw">
@@ -9,34 +8,35 @@
             Add Category
                 <form action="add_cat" method="post">
                     {% csrf_token %}
-                    <input type="text" name="cat"><br>
-                    <input type="submit" value="add" style="margin-top: 5px">
+                    <input class="inputentries" type="text" name="cat"><br>
+                    <input class="inputbuttons" type="submit" value="add" style="margin-top: 5px">
                 </form>
             Remove Category
                 <form action="remove_cat" method="post">
                     {% csrf_token %}
-                    <select name="category" required>
+                    <select class="inputentries" name="category" required>
                         {% for cat in category %}
                         <option value="{{cat}}">{{cat}}</option>
                         {% endfor %}
                     </select><br>
-                    <input type="submit" value="remove" style="margin-top: 5px" onclick="return confirm('Are you sure?')">
+                    <input class="inputbuttons" type="submit" value="remove" style="margin-top: 5px" onclick="return confirm('Are you sure?')">
                 </form>
                 <hr style="margin: 20px 0px 20px 0px; border: 1px solid lightgrey">
             </div>
             Add monthly limit
             <form action="add_monthly" method="post">
                 {% csrf_token %}
-                <input type="number" name="monthly" min="0" step="1" value="{{monthly}}"><br>
-                <input type="submit" value="add" style="margin-top: 5px">
+                <input class="inputentries" type="number" name="monthly" min="0" step="1" value="{{monthly}}"><br>
+                <input class="inputbuttons" type="submit" value="add" style="margin-top: 5px">
             </form>
             <hr style="margin: 20px 0px 20px 0px; border: 1px solid lightgrey">
             Import from .csv
             <form action="import_csv" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input type="file" name="csv_file" accept=".csv" required>
+                <label for="file-upload" class="inputentries" style="cursor: pointer; font-size:15px">Click here to select file</label>
+                <input id="file-upload" type="file" name="csv_file" accept=".csv" required>
                 <br>
-                <input type="submit" value="import" style="margin-top: 5px">
+                <input class="inputbuttons" type="submit" value="import" style="margin-top: 5px">
             </form>
         </div>
         <div style="max-width: 200px; color: red">
@@ -62,10 +62,10 @@
                         </tr>
                         <tr>
                             <td>
-                                <input type="date" name="date" required>
+                                <input class="inputentries" type="date" name="date" required>
                             </td>
                             <td>
-                                <select name="category" required>
+                                <select class="inputentries" name="category" required>
                                     {% if not category|length %}
                                         <option disabled selected value>add a category</option>
                                     {% endif %}
@@ -75,11 +75,11 @@
                                 </select>
                             </td>
                             <td>
-                                <input style ="text-align: right" type="number" name="price" min="0.01" step="0.01" value="0.00" required>
+                                <input class="inputentries" style ="text-align: right" type="number" name="price" min="0.01" step="0.01" value="0.00" required>
                             </td>
                             <td>
-                                <input type="text" name="notes" placeholder="Enter notes here">
-                                <input type="submit" value="add" style="margin-top: 5px">
+                                <input class="inputentries" type="text" name="notes" placeholder="Enter notes here">
+                                <input class="inputbuttons" type="submit" value="add" style="margin-top: 5px">
                             </td>                                                
                         </tr>
                     </form>
@@ -91,9 +91,9 @@
                 <table class="table" style="text-align: center">
                     {% for dat in data %}
                         <tr>
-                            <td>{{dat.date}}</td>
+                            <td>{{dat.date|date:'d.m.Y'}}</td>
                             <td>{{dat.category}}</td>
-                            <td style="text-align: right">{{dat.price_b|floatformat:2}}€</td>
+                            <td style="text-align: right">{{dat.price_b|floatformat:2}} €</td>
                             <td>{{dat.notes}}</td>
                         </tr>
                     {% endfor %}

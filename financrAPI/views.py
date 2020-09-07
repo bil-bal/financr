@@ -13,6 +13,7 @@ from django.http import Http404, HttpResponseForbidden
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.authtoken.models import Token
 
+import re
 import time
 
 # Create your views here.
@@ -96,6 +97,9 @@ class CategoryView(viewsets.ModelViewSet):
         user = self.request.user.id
         category = self.request.data['cat']
 
+        category = category.strip()
+        category = re.sub('[^A-Za-z0-9 ]+', '', category).lower().capitalize()
+
         serializer = CategorySerializer(data={'user': user, 'cat': category})
 
         serializer.is_valid()
@@ -110,6 +114,6 @@ class UserCreate(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        token, created = Token.objects.get_or_create(user_id=response.data["id"])
+        token, _ = Token.objects.get_or_create(user_id=response.data["id"])
         response.data["token"] = str(token)
         return response

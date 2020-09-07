@@ -23,8 +23,6 @@ def register(request):
 
 def confirm_register(request):
     if request.method == "POST":
-        first_name = request.POST["first_name"].strip()
-        last_name = request.POST["last_name"].strip()
         username = request.POST["username"].strip().lower()
         password1 = request.POST["password1"]
         password2 = request.POST["password2"]
@@ -33,7 +31,7 @@ def confirm_register(request):
                 messages.info(request, "Username already taken")
                 return redirect("register")
             else:
-                user = User.objects.create_user(username = username, password = password1, first_name = first_name, last_name = last_name)
+                user = User.objects.create_user(username = username, password = password1)
                 user.save()
         else:
             messages.info(request, "Passwords don't match")

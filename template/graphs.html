@@ -6,9 +6,9 @@
         <div style="border: 0px solid lightgrey; padding: 15px; box-shadow: 0px 10px 15px -4px lightgrey">
             <form action="/graphs/" method="post">
                 {% csrf_token %}
-                <div>From<br><input type="date" name="date1" value="{{start}}" required></div>
-                <div>To<br><input type="date" name="date2" value="{{end}}" required></div>
-                <div><input type="submit" value="filter" style="margin-top: 5px"></div>
+                <div>From<br><input class="inputentries" type="date" name="date1" value="{{start}}" required></div>
+                <div>To<br><input class="inputentries" type="date" name="date2" value="{{end}}" required></div>
+                <div><input class="inputbuttons" type="submit" value="filter" style="margin-top: 5px"></div>
             </form>
         </div>
     </div>

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, auth
 
 class Expense(models.Model):
     objects = models.Manager()
-    date = models.DateField()
+    date = models.DateTimeField()
     category = models.TextField(max_length = 20)
     price_b = models.BinaryField(max_length = 150)
     notes = models.TextField(max_length = 100, default="-")

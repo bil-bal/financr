@@ -39,7 +39,11 @@ def add_monthly(request):
 def add_data(request):
     if request.method == "POST":
         data = Expense()
-        data.date = request.POST['date']
+        print(request.POST['date'])
+        now = datetime.datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        print(current_time)
+        data.date = f"{request.POST['date']} {current_time}"
         data.category = request.POST['category']
         data.price_b = encr(gen_encr(SECRET_KEY), request.POST['price'])
         
@@ -94,7 +98,7 @@ def remove_data(request):
         for x in dat:
             x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
             
-        return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": True})
+        return render(request, "view.html", {"name": request.user.username, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": True})
     else:
         return redirect("view")
 
@@ -118,7 +122,7 @@ def edit_data(request):
         for x in dat:
             x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
 
-        return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": True})
+        return render(request, "view.html", {"name": request.user.username, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": True})
     else:
         return redirect("view")
 
@@ -140,9 +144,9 @@ def toggle_edit(request):
         dat = Expense.objects.filter(user_id = request.user.id).order_by('-date')
 
         for x in dat:
-            x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
+            x.price_b = str(float(decr(gen_encr(SECRET_KEY), bytes(x.price_b))))
 
-        return render(request, "view.html", {"name": request.user.first_name, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": tr})
+        return render(request, "view.html", {"name": request.user.username, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": tr})
     else:
         return redirect("view")
 
