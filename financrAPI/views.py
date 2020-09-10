@@ -40,7 +40,7 @@ class ExpenseView(viewsets.ModelViewSet):
             if v:
                 arguments[k] = v
 
-        data = Expense.objects.filter(**arguments).order_by("-date")
+        data = Expense.objects.filter(**arguments).order_by("-id")
 
         return data
 

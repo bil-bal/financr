@@ -120,7 +120,7 @@ def edit_data(request):
         dat = Expense.objects.filter(user_id = request.user.id).order_by('-date')
 
         for x in dat:
-            x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
+            x.price_b = str(float(decr(gen_encr(SECRET_KEY), bytes(x.price_b))))
 
         return render(request, "view.html", {"name": request.user.username, "data": dat, "nbar": "view", "category": cat_list, "toggle_edit": True})
     else:

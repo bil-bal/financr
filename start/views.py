@@ -185,18 +185,19 @@ def graphs(request):
 
     for x in dat:
         date_dict_month[x.date.year] = {}
-        date_dict_day[x.date] = {}
+        print(x.date.strftime("%Y-%m-%d"))
+        date_dict_day[x.date.strftime("%Y-%m-%d")] = {}
 
     for x in dat:
         x.price_b = float(decr(gen_encr(SECRET_KEY), bytes(x.price_b)))
         
         expense_list.append(x.price_b)
         date_dict_month[x.date.year][x.date.month] = 0
-        date_dict_day[x.date] = 0
+        date_dict_day[x.date.strftime("%Y-%m-%d")] = 0
 
     for x in dat:
         date_dict_month[x.date.year][x.date.month] += x.price_b
-        date_dict_day[x.date] += x.price_b
+        date_dict_day[x.date.strftime("%Y-%m-%d")] += x.price_b
 
     monthly_list = []
     month_dates = []
@@ -228,7 +229,9 @@ def graphs(request):
 
     line_chart = pygal.Line(x_label_rotation=20, stroke_style={'width': 3},height=300, width=800, style=custom_style_)
     line_chart.title = "Per day"
-    line_chart.x_labels = map(lambda d: d.strftime('%Y-%m-%d'), date_list)
+    #line_chart.x_labels = map(lambda d: d.strftime('%Y-%m-%d'), date_list)
+    line_chart.x_labels = map(lambda d: d, date_list)
+
     line_chart.add("Expense", daily_list)
     line_chart_data = line_chart.render_data_uri()
 
