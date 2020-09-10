@@ -76,10 +76,11 @@ class MonthlyView(viewsets.ModelViewSet):
     def create(self, request):
         user = self.request.user.id
         monthly = self.request.data['monthly']
-        
+
         serializer = MonthlySerializer(data={'user': user, 'monthly': monthly})
 
         serializer.is_valid()
+        Monthly.objects.filter(user_id = request.user.id).delete()
         serializer.save()
 
         return response.Response(serializer.data)
