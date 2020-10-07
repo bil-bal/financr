@@ -12,3 +12,20 @@ It is possible to download your entries as a .csv file for easy transfer, a loca
 The actual amounts (price column and monthly limit) will be encrypted through the Fernet (symmetric encryption) algorithm and a secret key and everytime they get looked up, or downloaded as a .csv file they will be decrypted.
 
 Finally, you can view graphs for your data to help you visualize the expenses.
+
+## Built with
+
+- HTML
+- CSS
+- Python
+- PostgreSQL
+
+## Modules used
+
+- Django
+- Cryptography
+- Pygal
+
+## To do
+
+- Add new features.
